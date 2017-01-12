@@ -20,6 +20,11 @@ public:
 	SerialUSB(SerialUSB::Port port=SerialUSB::kUSB);
 	~SerialUSB();
 private:
+
+	void restartAfterSuspendBit();
+	void restartBit();
+	void stopBit();
+	void suspendBit();
 	char* ports[3]={"/dev/ttyUSB0","/dev/ttyUSB1","/dev/ttyUSB2"};
 	struct termios config;
 	int sPort;
@@ -38,6 +43,7 @@ private:
 	bool testEnabled;
 	void init(char* byte, char* data);
 	int PACKETSIZE=60;
+
 };
 #endif
 

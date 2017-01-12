@@ -78,3 +78,15 @@ void SerialUSB::test(){
 void SerialUSB::disable(){
 	testEnabled=false;
 }
+void SerialUSB::restartAfterSuspendBit(){
+	tcflow(sPort,TCOON);//Output On
+}
+void SerialUSB::restartBit(){
+	tcflow(sPort,TCION);//Input ON
+}
+void SerialUSB::stopBit(){
+	tcflow(sPort,TCIOFF);//Input Off
+}
+void SerialUSB::suspendBit(){
+	tcflow(sPort,TCOOFF);//Output Off
+}
