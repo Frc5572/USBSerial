@@ -25,6 +25,9 @@ private:
 	void restartBit();
 	void stopBit();
 	void suspendBit();
+	void FlushInput();
+	void FlushOutput();
+	void FlushIO();
 	char* ports[3]={"/dev/ttyUSB0","/dev/ttyUSB1","/dev/ttyUSB2"};
 	struct termios config;
 	int sPort;

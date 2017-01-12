@@ -90,3 +90,12 @@ void SerialUSB::stopBit(){
 void SerialUSB::suspendBit(){
 	tcflow(sPort,TCOOFF);//Output Off
 }
+void SerialUSB::FlushInput(){
+	tcflush(sPort,TCIFLUSH);
+}
+void SerialUSB::FlushOutput(){
+	tcflush(sPort,TCOFLUSH);
+}
+void SerialUSB::FlushIO(){
+	tcflush(sPort,TCIOFLUSH);
+}
