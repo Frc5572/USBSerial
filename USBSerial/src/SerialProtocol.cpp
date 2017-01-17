@@ -14,14 +14,25 @@ using namespace frc;
 
 
 SerialUSB::SerialUSB(SerialUSB::Port port){
-		//system("stty -F /dev/ttyUSB0 115200 intr ^C quit ^\\ erase ^? kill ^U eof ^D start ^Q stop ^S susp ^Z rprnt ^R werase ^W flush ^O min 1 time 0 -parenb -parodd cs8 hupcl -cstopb cread clocal -crtscts -ignbrk -brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr -icrnl ixon ixoff -iuclc -ixany -imaxbel -iutf8 opost -olcuc -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0 isig -icanon -iexten -echo echoe echok -echonl -noflsh -xcase -tostop -echoprt echoctl echoke");
+		//system("stty -F /dev/ttyUSB0 115200 intr ^C quit '^\\' erase ^? kill ^U eof ^D start ^Q stop ^S susp ^Z rprnt ^R werase ^W flush ^O");
 		sPort=open(ports[port], O_RDWR | O_NOCTTY );
 		config.c_iflag &= ~(IGNBRK | BRKINT | IGNPAR | PARMRK | INPCK |  ISTRIP | ICRNL | INLCR | IUCLC | IXANY | IMAXBEL | IUTF8 | ICANON | IEXTEN) | IXON | IXOFF | ISIG;
 		config.c_cflag &= ~(PARENB | PARODD | CSTOPB | CRTSCTS) | CS8 | HUPCL | CREAD | CLOCAL;
 		config.c_lflag &= ~( ECHO | ECHONL | NOFLSH | XCASE | TOSTOP | ECHOPRT ) | ECHOE | ECHOK | ECHOCTL | ECHOKE ;
 		config.c_oflag &= ~(OLCUC | OCRNL | ONOCR | ONLRET | OFILL | OFDEL) | NL0 | CR0 | TAB0 | BS0 | VT0 | FF0;
-		config.c_cc[VMIN]=1;
+		config.c_cc[VMIN]=PACKETSIZE;
 		config.c_cc[VTIME]=0;
+		config.c_cc[VINTR]=(char)003;
+		config.c_cc[VQUIT]=(char)034;
+		config.c_cc[VERASE]=(char)177;
+		config.c_cc[VKILL]=(char)025;
+		config.c_cc[VEOF]=(char)004;
+		config.c_cc[VSTART]=(char)021;
+		config.c_cc[VSTOP]=(char)023;
+		config.c_cc[VSUSP]=(char)032;
+		config.c_cc[VREPRINT]=(char)022;
+		config.c_cc[VWERASE]=(char)027;
+		//config.c_cc[VFLUSH] = '^O';
 		if(cfsetispeed(&config,B115200)<0){
 			std::cout<<"error: cfsetispeed\n";
 		}else{
@@ -32,7 +43,7 @@ SerialUSB::SerialUSB(SerialUSB::Port port){
 		}else{
 			std::cout<<"Output Speed Set\n";
 		}
-		if(tcsetattr(sPort, TCSAFLUSH, &config)<0){
+		if(tcsetattr(sPort, TCSANOW, &config)<0){
 			std::cout<<"error: tcsetattr\n";
 		}else{
 			std::cout<<"Setting pushed to file descriptor\n";
@@ -47,7 +58,8 @@ SerialUSB::SerialUSB(SerialUSB::Port port){
 		}else{
 			std::cout<<"Failed to open port\n";
 		}
-
+		system("tty");
+		system("stty -F /dev/ttyUSB0 -a");
 }
 SerialUSB::~SerialUSB(){
 	close(sPort);
@@ -70,6 +82,7 @@ void SerialUSB::init(char* byte, char* data){
 			std::cout<<buffer;
 			//write(sPort,buf,sizeof(buf)+2); Write test= Success
 		}
+		std::cout << "eol" << std::endl;
 	}
 }
 void SerialUSB::test(){
